@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+  <meta charset="UTF-8">
+  <title>Keyboard Display</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 20px;
+      font-family: sans-serif;
+      background: #f5f5f5;
+    }
+    .display {
+      font-size: 72px;
+      font-weight: bold;
+      text-align: center;
+      margin-bottom: 20px;
+      color: #333;
+      min-height: 80px;
+      line-height: 1;
+    }
+    .keys {
+      display: grid;
+      grid-template-columns: repeat(10, 1fr);
+      gap: 4px;
+      width: 420px;
+      margin-top: 20px;
+    }
+    .key {
+      height: 70px;
+      border: 2px solid #444;
+      border-radius: 8px;
+      background: #fff;
+      cursor: pointer;
+      font-size: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.1s;
+    }
+    .key:active {
+      transform: scale(0.95);
+    }
+    .key.letter {
+      background: #222;
+      color: #fff;
+      font-size: 36px;
+    }
+    .key.number {
+      background: #eee;
+      color: #555;
+      font-size: 36px;
+    }
+    .key.space {
+      background: #ddd;
+      color: #999;
+      font-size: 36px;
+    }
+  </style>
+</head>
+<body>
+  <div class="display" id="display">—</div>
+  <div class="keys">
+    <div class="key letter" onclick="showLetter('A')">A</div>
+    <div class="key letter" onclick="showLetter('B')">B</div>
+    <div class="key letter" onclick="showLetter('C')">C</div>
+    <div class="key letter" onclick="showLetter('D')">D</div>
+    <div class="key letter" onclick="showLetter('E')">E</div>
+    <div class="key letter" onclick="showLetter('F')">F</div>
+    <div class="key letter" onclick="showLetter('G')">G</div>
+    <div class="key letter" onclick="showLetter('H')">H</div>
+    <div class="key letter" onclick="showLetter('I')">I</div>
+    <div class="key letter" onclick="showLetter('J')">J</div>
+    <div class="key letter" onclick="showLetter('K')">K</div>
+    <div class="key letter" onclick="showLetter('L')">L</div>
+    <div class="key letter" onclick="showLetter('M')">M</div>
+    <div class="key letter" onclick="showLetter('N')">N</div>
+    <div class="key letter" onclick="showLetter('O')">O</div>
+    <div class="key letter" onclick="showLetter('P')">P</div>
+    <div class="key number" onclick="showNumber('1')">1</div>
+    <div class="key number" onclick="showNumber('2')">2</div>
+    <div class="key number" onclick="showNumber('3')">3</div>
+    <div class="key number" onclick="showNumber('4')">4</div>
+    <div class="key number" onclick="showNumber('5')">5</div>
+    <div class="key number" onclick="showNumber('6')">6</div>
+    <div class="key number" onclick="showNumber('7')">7</div>
+    <div class="key number" onclick="showNumber('8')">8</div>
+    <div class="key number" onclick="showNumber('9')">9</div>
+    <div class="key number" onclick="showNumber('0')">0</div>
+    <div class="key space" onclick="showSpace()">Space</div>
+  </div>
+
+  <script>
+    function showLetter(ch) {
+      document.getElementById('display').textContent = ch;
+    }
+    function showNumber(n) {
+      document.getElementById('display').textContent = n;
+    }
+    function showSpace() {
+      document.getElementById('display').textContent = 'Space';
+    }
+  </script>
+</body>
+</html>
