@@ -2,104 +2,185 @@
 <html lang="ms">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
   <title>Keyboard Display</title>
   <style>
-    body {
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+    html, body {
       margin: 0;
-      padding: 20px;
-      font-family: sans-serif;
-      background: #f5f5f5;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      background: #1a1a1a;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      overflow: hidden;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+    .app {
+      display: flex;
+      flex-direction: column;
+      width: 100vw;
+      height: 100vh;
+      padding: 12px;
+    }
+    .display-wrap {
+      flex: 0 0 auto;
+      background: #000;
+      border: 3px solid #444;
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 14px;
+      min-height: 90px;
+      max-height: 28vh;
+      overflow-y: auto;
+      display: flex;
+      align-items: center;
     }
     .display {
-      font-size: 72px;
+      font-size: 9vh;
       font-weight: bold;
-      text-align: center;
-      margin-bottom: 20px;
-      color: #333;
-      min-height: 80px;
+      color: #00ff88;
       line-height: 1;
+      letter-spacing: 0.05em;
+      word-break: break-all;
+      width: 100%;
+      font-family: "Courier New", monospace;
+    }
+    .display::after {
+      content: "▌";
+      animation: blink 1s infinite;
+    }
+    @keyframes blink {
+      50% { opacity: 0; }
     }
     .keys {
+      flex: 1 1 auto;
       display: grid;
       grid-template-columns: repeat(10, 1fr);
-      gap: 4px;
-      width: 420px;
-      margin-top: 20px;
+      gap: 6px;
+      min-height: 0;
+    }
+    .row {
+      display: contents;
     }
     .key {
-      height: 70px;
+      background: #2d2d2d;
+      color: #fff;
       border: 2px solid #444;
-      border-radius: 8px;
-      background: #fff;
+      border-radius: 10px;
       cursor: pointer;
-      font-size: 36px;
+      font-size: 4.5vh;
+      font-weight: bold;
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: transform 0.1s;
+      transition: transform 0.08s, background 0.08s;
+      touch-action: manipulation;
+      min-height: 0;
     }
     .key:active {
-      transform: scale(0.95);
+      transform: scale(0.93);
+      background: #00aa66;
     }
-    .key.letter {
-      background: #222;
-      color: #fff;
-      font-size: 36px;
+    .key.num {
+      background: #3a3a3a;
+      color: #ffdd66;
     }
-    .key.number {
-      background: #eee;
-      color: #555;
-      font-size: 36px;
+    .key.action {
+      background: #5a2d2d;
+      color: #ff8888;
+      font-size: 3vh;
     }
     .key.space {
-      background: #ddd;
-      color: #999;
-      font-size: 36px;
+      background: #2d4d5a;
+      color: #88ccff;
+    }
+    .key.wide {
+      grid-column: span 2;
     }
   </style>
 </head>
 <body>
-  <div class="display" id="display">—</div>
-  <div class="keys">
-    <div class="key letter" onclick="showLetter('A')">A</div>
-    <div class="key letter" onclick="showLetter('B')">B</div>
-    <div class="key letter" onclick="showLetter('C')">C</div>
-    <div class="key letter" onclick="showLetter('D')">D</div>
-    <div class="key letter" onclick="showLetter('E')">E</div>
-    <div class="key letter" onclick="showLetter('F')">F</div>
-    <div class="key letter" onclick="showLetter('G')">G</div>
-    <div class="key letter" onclick="showLetter('H')">H</div>
-    <div class="key letter" onclick="showLetter('I')">I</div>
-    <div class="key letter" onclick="showLetter('J')">J</div>
-    <div class="key letter" onclick="showLetter('K')">K</div>
-    <div class="key letter" onclick="showLetter('L')">L</div>
-    <div class="key letter" onclick="showLetter('M')">M</div>
-    <div class="key letter" onclick="showLetter('N')">N</div>
-    <div class="key letter" onclick="showLetter('O')">O</div>
-    <div class="key letter" onclick="showLetter('P')">P</div>
-    <div class="key number" onclick="showNumber('1')">1</div>
-    <div class="key number" onclick="showNumber('2')">2</div>
-    <div class="key number" onclick="showNumber('3')">3</div>
-    <div class="key number" onclick="showNumber('4')">4</div>
-    <div class="key number" onclick="showNumber('5')">5</div>
-    <div class="key number" onclick="showNumber('6')">6</div>
-    <div class="key number" onclick="showNumber('7')">7</div>
-    <div class="key number" onclick="showNumber('8')">8</div>
-    <div class="key number" onclick="showNumber('9')">9</div>
-    <div class="key number" onclick="showNumber('0')">0</div>
-    <div class="key space" onclick="showSpace()">Space</div>
+  <div class="app">
+    <div class="display-wrap">
+      <div class="display" id="display"></div>
+    </div>
+    <div class="keys" id="keys"></div>
   </div>
 
   <script>
-    function showLetter(ch) {
-      document.getElementById('display').textContent = ch;
+    const LAYOUT = [
+      ['1','2','3','4','5','6','7','8','9','0'],
+      ['Q','W','E','R','T','Y','U','I','O','P'],
+      ['A','S','D','F','G','H','J','K','L',{label:'⌫',action:'back',cls:'action'}],
+      ['Z','X','C','V','B','N','M',{label:'⎵',action:'space',cls:'space wide'}],
+      [{label:'CLEAR',action:'clear',cls:'action wide'},{label:'🔊',action:'speak',cls:'action wide'}]
+    ];
+
+    const keys = document.getElementById('keys');
+    let text = '';
+
+    function render() {
+      const display = document.getElementById('display');
+      display.textContent = text || '';
     }
-    function showNumber(n) {
-      document.getElementById('display').textContent = n;
+
+    function press(ch) {
+      text += ch;
+      render();
     }
-    function showSpace() {
-      document.getElementById('display').textContent = 'Space';
+
+    function backspace() {
+      text = text.slice(0, -1);
+      render();
     }
+
+    function space() {
+      text += ' ';
+      render();
+    }
+
+    function clearAll() {
+      text = '';
+      render();
+    }
+
+    function speak() {
+      if (!text) return;
+      if ('speechSynthesis' in window) {
+        const u = new SpeechSynthesisUtterance(text);
+        u.lang = 'ms-MY';
+        u.rate = 0.85;
+        speechSynthesis.cancel();
+        speechSynthesis.speak(u);
+      }
+    }
+
+    LAYOUT.forEach(row => {
+      row.forEach(item => {
+        const btn = document.createElement('div');
+        btn.className = 'key';
+        if (typeof item === 'string') {
+          btn.textContent = item;
+          if (/^[0-9]$/.test(item)) btn.classList.add('num');
+          btn.onclick = () => press(item);
+        } else {
+          btn.textContent = item.label;
+          btn.classList.add(...(item.cls ? item.cls.split(' ') : []));
+          if (item.action === 'back') btn.onclick = backspace;
+          else if (item.action === 'space') btn.onclick = space;
+          else if (item.action === 'clear') btn.onclick = clearAll;
+          else if (item.action === 'speak') btn.onclick = speak;
+        }
+        keys.appendChild(btn);
+      });
+    });
+
+    render();
   </script>
 </body>
 </html>
